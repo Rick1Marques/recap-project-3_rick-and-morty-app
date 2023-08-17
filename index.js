@@ -1,3 +1,5 @@
+import { createCharacterCard } from "./components/card/card.js";
+
 console.clear();
 
 const cardContainer = document.querySelector('[data-js="card-container"]');
@@ -11,47 +13,15 @@ const nextButton = document.querySelector('[data-js="button-next"]');
 let pagination = document.querySelector('[data-js="pagination"]');
 
 // States
-const maxPage = 42;
-const page = 1;
+let maxPage = 42;
+let page = 1;
 const searchQuery = "";
-
-// function card js
-
-function createCharactersCard(characters) {
-  characters.forEach((character) => {
-    const listItem = `
-    <li class="card">
-            <div class="card__image-container">
-              <img
-                class="card__image"
-                src="${character.image}"
-                alt="${character.name}"
-              />
-              <div class="card__image-gradient"></div>
-            </div>
-            <div class="card__content">
-              <h2 class="card__title">${character.name}</h2>
-              <dl class="card__info">
-                <dt class="card__info-title">Status</dt>
-                <dd class="card__info-description">${character.status}</dd>
-                <dt class="card__info-title">Type</dt>
-                <dd class="card__info-description">${character.type}</dd>
-                <dt class="card__info-title">Occurrences</dt>
-                <dd class="card__info-description">${character.episode.length}</dd>
-              </dl>
-            </div>
-          </li>
-    `;
-    cardContainer.innerHTML += listItem;
-  });
-  // console.log(listItem);
-}
 
 // API
 
-async function getCharacters(pageNumber) {
+async function getCharacters() {
   const response = await fetch(
-    `https://rickandmortyapi.com/api/character?page=${pageNumber}`
+    `https://rickandmortyapi.com/api/character?page=${page}`
   );
   if (!response.ok) {
     console.log("Network error!", response.status);
@@ -59,45 +29,33 @@ async function getCharacters(pageNumber) {
   }
   try {
     const json = await response.json();
-    return json.results;
+    const characters = json.results;
+    pagination.innerHTML = `${page} / ${maxPage}`;
+    cardContainer.innerHTML = "";
+    characters.forEach((character) => {
+      const card = createCharacterCard(character);
+      cardContainer.append(card);
+    });
   } catch (error) {
     console.log("Error parsing json!", error);
     return null;
   }
 }
 
-async function runAPI() {
-  const results = await getCharacters();
-  return results;
-}
-
-const allCards = await runAPI();
-const firstCard = allCards[0];
-createCharactersCard(allCards);
+getCharacters();
 
 //add event listener
 
 nextButton.addEventListener("click", () => {
-  let pageNumber = parseInt(pagination.innerHTML.slice(0, 2));
-
-  if (pageNumber < 42) {
-    pageNumber += 1;
-    pagination.innerHTML = `${pageNumber} / ${maxPage}`;
-    console.log(pagination.innerHTML.slice(0, 2));
-  } else {
-    pagination.innerHTML[0] = pageNumber;
+  if (page < 42) {
+    page += 1;
+    getCharacters();
   }
 });
 
 prevButton.addEventListener("click", () => {
-  let pageNumber = parseInt(pagination.innerHTML.slice(0, 2));
-
-  if (pageNumber > 1) {
-    pageNumber -= 1;
-    pagination.innerHTML = `${pageNumber} / ${maxPage}`;
-    console.log(pagination.innerHTML.slice(0, 2));
-  } else {
-    pagination.innerHTML[0] = pageNumber;
+  if (page > 1) {
+    page -= 1;
+    getCharacters();
   }
 });
-
