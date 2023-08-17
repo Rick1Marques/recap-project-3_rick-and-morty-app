@@ -13,7 +13,7 @@ const nextButton = document.querySelector('[data-js="button-next"]');
 let pagination = document.querySelector('[data-js="pagination"]');
 
 // States
-let maxPage = "";
+let maxPage = 42;
 let page = 1;
 const searchQuery = "";
 
@@ -28,10 +28,8 @@ async function getCharacters() {
     return null;
   }
   try {
-    const character = await response.json();
-    const characters = character.results;
-    maxPage = await character.info.pages;
-    console.log(maxPage);
+    const json = await response.json();
+    const characters = json.results;
     pagination.innerHTML = `${page} / ${maxPage}`;
     cardContainer.innerHTML = "";
     characters.forEach((character) => {
@@ -49,7 +47,7 @@ getCharacters();
 //add event listener
 
 nextButton.addEventListener("click", () => {
-  if (page < maxPage) {
+  if (page < 42) {
     page += 1;
     getCharacters();
   }
