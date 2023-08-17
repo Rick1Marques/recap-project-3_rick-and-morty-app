@@ -8,10 +8,10 @@ const searchBar = document.querySelector('[data-js="search-bar"]');
 const navigation = document.querySelector('[data-js="navigation"]');
 const prevButton = document.querySelector('[data-js="button-prev"]');
 const nextButton = document.querySelector('[data-js="button-next"]');
-const pagination = document.querySelector('[data-js="pagination"]');
+let pagination = document.querySelector('[data-js="pagination"]');
 
 // States
-const maxPage = 1;
+const maxPage = 42;
 const page = 1;
 const searchQuery = "";
 
@@ -49,8 +49,10 @@ function createCharactersCard(characters) {
 
 // API
 
-async function getCharacters() {
-  const response = await fetch("https://rickandmortyapi.com/api/character");
+async function getCharacters(pageNumber) {
+  const response = await fetch(
+    `https://rickandmortyapi.com/api/character?page=${pageNumber}`
+  );
   if (!response.ok) {
     console.log("Network error!", response.status);
     return null;
@@ -72,3 +74,17 @@ async function runAPI() {
 const allCards = await runAPI();
 const firstCard = allCards[0];
 createCharactersCard(allCards);
+
+//add event listener
+
+nextButton.addEventListener("click", () => {
+  let pageNumber = parseInt(pagination.innerHTML.slice(0, 2));
+  console.log(pageNumber);
+  if (pageNumber < 42) {
+    pageNumber += 1;
+    pagination.innerHTML = `${pageNumber} / ${maxPage}`;
+    console.log(pagination.innerHTML.slice(0, 2));
+  } else {
+    pagination.innerHTML[0] = pageNumber;
+  }
+});
