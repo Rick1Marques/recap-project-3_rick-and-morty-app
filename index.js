@@ -79,7 +79,7 @@ createCharactersCard(allCards);
 
 nextButton.addEventListener("click", () => {
   let pageNumber = parseInt(pagination.innerHTML.slice(0, 2));
-  console.log(pageNumber);
+
   if (pageNumber < 42) {
     pageNumber += 1;
     pagination.innerHTML = `${pageNumber} / ${maxPage}`;
@@ -88,3 +88,16 @@ nextButton.addEventListener("click", () => {
     pagination.innerHTML[0] = pageNumber;
   }
 });
+
+prevButton.addEventListener("click", () => {
+  let pageNumber = parseInt(pagination.innerHTML.slice(0, 2));
+
+  if (pageNumber > 1) {
+    pageNumber -= 1;
+    pagination.innerHTML = `${pageNumber} / ${maxPage}`;
+    console.log(pagination.innerHTML.slice(0, 2));
+  } else {
+    pagination.innerHTML[0] = pageNumber;
+  }
+});
+
